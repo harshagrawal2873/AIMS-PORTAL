@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Seeder</title>
+  <style>
+    /* Minimal design styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    form, ul {
+      background: #fff;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+    button {
+      cursor: pointer;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .admin-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .admin-actions button {
+      margin-left: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    #message {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #e0ffe0;
+      border: 1px solid #b2ffb2;
+      border-radius: 3px;
+      color: #2d662d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Seeder</h1>
+  
+  <h2>Existing Admins</h2>
+  <ul id="adminList"></ul>
+  
+  <h2>Add a New Admin</h2>
+  <form id="adminForm">
+    <label for="name">Admin Name:</label>
+    <input type="text" id="name" required>
+    <br>
+    <label for="email">Base Admin Email:</label>
+    <input type="email" id="email" required>
+    <br>
+    <button type="submit">Add Admin</button>
+  </form>
+  
+  <p id="message"></p>
+
+  <script>
+    // Function to fetch and display existing admins
+    async function fetchAdmins() {
+      try {
+        const res = await fetch("http://localhost:5000/api/seed/admins");
+        const data = await res.json();
+        const adminList = document.getElementById("adminList");
+        adminList.innerHTML = "";
+        if (data.success) {
+          data.admins.forEach(admin => {
+            const li = document.createElement("li");
+            li.classList.add("admin-item");
+            li.innerHTML = `<span>${admin.name} - ${admin.email}</span>
+              <span class="admin-actions">
+                <button onclick="copyEmail('${admin.email}')">Copy</button>
+                <button onclick="deleteAdmin('${admin._id}')">Delete</button>
+              </span>`;
+            adminList.appendChild(li);
+          });
+        } else {
+          adminList.textContent = "Error fetching admins.";
+        }
+      } catch (error) {
+        document.getElementById("adminList").textContent = "Error fetching admins: " + error;
+      }
+    }
+
+    // Function to copy email to clipboard
+    function copyEmail(email) {
+      navigator.clipboard.writeText(email)
+        .then(() => alert('Email copied: ' + email))
+        .catch(err => alert('Failed to copy email: ' + err));
+    }
+
+    // Handle form submission to add a new admin
+    document.getElementById("adminForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      try {
+        const res = await fetch("http://localhost:5000/api/seed/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email })
+        });
+        const result = await res.json();
+        document.getElementById("message").textContent = result.message;
+        fetchAdmins(); // Refresh the list of admins
+      } catch (err) {
+        document.getElementById("message").textContent = "Error adding admin: " + err;
+      }
+    });
+
+    // Function to delete an admin
+    async function deleteAdmin(id) {
+      try {
+        const res = await fetch(`http://localhost:5000/api/seed/admin/${id}`, {
+          method: "DELETE"
+        });
+        const result = await res.json();
+        document.getElementById("message").textContent = result.message;
+        fetchAdmins(); // Refresh the list of admins
+      } catch (err) {
+        document.getElementById("message").textContent = "Error deleting admin: " + err;
+      }
+    }
+
+    // Fetch the list of existing admins when the page loads
+    fetchAdmins();
+  </script>
+</body>
+</html>

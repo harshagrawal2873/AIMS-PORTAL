@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #28a745;
+  --danger-color: #dc3545;
+  --font-family: "Arial", "Helvetica", sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+.container {
+  max-width: 90%;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.input-field,
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.submit-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.course-list,
+.application-list {
+  list-style: none;
+  padding: 0;
+}
+
+.course-item,
+.application-item {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.approve-btn,
+.reject-btn {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.approve-btn {
+  background-color: var(--secondary-color);
+}
+
+.reject-btn {
+  background-color: var(--danger-color);
+}
+
+.approve-btn:hover {
+  background-color: #218838;
+}
+
+.reject-btn:hover {
+  background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .input-field,
+  .submit-btn {
+    font-size: 0.9rem;
+  }
+}
